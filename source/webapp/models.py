@@ -13,16 +13,6 @@ class Publication(models.Model):
     def __str__(self):
         return f'{self.description} {self.created}'
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.author.publication_counter += 1
-            self.author.save()
-        return super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.author.publication_counter -= 1
-        self.author.save()
-        return super().delete(*args, **kwargs)
 
 class Comment(models.Model):
     author = models.ForeignKey(get_user_model(), default=1, related_name='comments', on_delete=models.CASCADE, verbose_name='Автор')
