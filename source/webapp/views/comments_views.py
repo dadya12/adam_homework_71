@@ -1,8 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, View
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import DetailView, View, CreateView
 from webapp.models import Comment, Publication
+from webapp.forms import CommentForm
 
 class LikeCommentUser(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
@@ -21,3 +22,16 @@ class CommentView(DetailView):
         context = super().get_context_data(pk=self.object.pk)
         context['comments'] = Comment.objects.filter(post_id=self.object.pk)
         return context
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    template_name = 'comments/comment_create.html'
+    model = Comment
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        publication = get_object_or_404(Publication, pk=self.kwargs.get('pk'))
+        comment = form.save(commit=False)
+        comment.post = publication
+        comment.author = self.request.user
+        comment.save()
+        return redirect('webapp:index')

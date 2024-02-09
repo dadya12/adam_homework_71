@@ -42,7 +42,7 @@ class UserChangeView(LoginRequiredMixin, UpdateView):
     context_object_name = 'user_obj'
 
     def get_queryset(self):
-        return super().get_queryset().get(id=self.request.user.id)
+        return super().get_queryset().filter(id=self.request.user.id)
 
     def get_success_url(self):
         return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})

@@ -1,4 +1,4 @@
 from django.contrib import admin
-from webapp.models import Publication
+from webapp.models import Publication, Comment
 
 admin.site.register(Publication)
