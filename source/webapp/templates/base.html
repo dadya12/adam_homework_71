@@ -53,9 +53,48 @@
     {% block content %}
     {% endblock %}
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+
+<script>
+    async function makeRequest(url, method = 'GET') {
+        let response = await fetch(url, {method});
+
+        if (response.ok) {
+            return await response.json();
+        } else {
+            let error = new Error(response.statusText);
+            error.response = response;
+            throw error;
+        }
+    }
+
+    async function onClick(e) {
+        e.preventDefault()
+        let a = e.target.closest('a');
+        let url = a.getAttribute('href');
+        let response = await makeRequest(url);
+
+        if (a.querySelector('.bi-heart-fill')) {
+            a.querySelector('.bi-heart-fill').classList.replace('bi-heart-fill', 'bi-heart');
+        } else {
+            a.querySelector('.bi-heart').classList.replace('bi-heart', 'bi-heart-fill');
+        }
+        let span = document.getElementById(a.dataset['spanCountId']);
+        span.innerText = response.count;
+    }
+
+    function onLoad() {
+        let likes = document.getElementsByClassName('likes');
+        for (let like of likes) {
+            like.addEventListener('click', onClick);
+        }
+    }
+
+    window.addEventListener('load', onLoad);
+</script>
+
 </body>
 </html>
+
